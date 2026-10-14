@@ -988,7 +988,8 @@ public class MobilePlaybackActivity extends MobileActivity
         // debug.arc.touch_prefetch_ms (see SwitchExperiments); release builds always pass 0.
         long touchPrefetchMs = com.newtube.mobile.player.SwitchExperiments.touchPrefetchStillMs();
         mRelatedAdapter = new RelatedVideoAdapter(this::onRelatedClicked,
-                touchPrefetchMs > 0 ? this::onRelatedPressed : null, touchPrefetchMs);
+                touchPrefetchMs > 0 ? this::onRelatedPressed : null, touchPrefetchMs,
+                true, this::onRelatedLongClicked);
         mWatchRelated.setLayoutManager(new LinearLayoutManager(this));
         mWatchRelated.setNestedScrollingEnabled(false);
         mWatchRelated.setHasFixedSize(false);
@@ -7998,6 +7999,13 @@ public class MobilePlaybackActivity extends MobileActivity
 
     private void onRelatedClicked(Video video) {
         onRelatedClicked(video, null);
+    }
+
+    /** ⋮ / long-press on an Up next card: the same context menu as the Home cards. */
+    private void onRelatedLongClicked(Video video) {
+        if (mPresenter != null && video != null) {
+            mPresenter.onSuggestionItemLongClicked(video);
+        }
     }
 
     private void onRelatedClicked(Video video, @Nullable ImageView thumbnail) {
