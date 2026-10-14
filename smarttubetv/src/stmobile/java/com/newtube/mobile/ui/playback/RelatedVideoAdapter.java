@@ -24,12 +24,22 @@ import com.liskovsoft.smartyoutubetv2.common.utils.ClickbaitRemover;
 import com.liskovsoft.smartyoutubetv2.tv.R;
 
 /**
- * "Up next / related" list adapter for the watch page ({@link MobilePlaybackActivity}).
- * Two looks: full-width cards (Up next) or compact rows (queue).
+ * Compact single-column "up next / related" list adapter for the watch page
+ * ({@link MobilePlaybackActivity}). Mirrors {@code VideoCardAdapter}'s thumbnail/badge/progress
+ * binding (Glide + {@code ClickbaitRemover} + {@code MainUIData} thumb quality) but with a
+ * small horizontal row layout ({@code item_mobile_related_video}) instead of a full-width card.
+ *
+ * <p>Tapping a row routes the tapped {@link Video} to
+ * {@code PlaybackPresenter.onSuggestionItemClicked(Video)} (via the click listener) which both
+ * marks queue state and loads/plays the video in the same player.</p>
  */
 public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.RelatedViewHolder> {
 
     public interface OnRelatedClickListener {
+        /**
+         * @param thumbnail the row's picture, so the player can show it in the video box at once
+         *                  (NEWTUBE(motion)); null when the row has none
+         */
         void onRelatedClick(Video video, @androidx.annotation.Nullable ImageView thumbnail);
     }
 
@@ -38,29 +48,37 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
         void onRelatedPress(Video video);
     }
 
+    private final OnRelatedClickListener mClickListener;
+    @androidx.annotation.Nullable
+    private final OnRelatedPressListener mPressListener;
+    private final long mPressIntentMs;
+    /** Full-width card rows (Up next) instead of the compact thumb-left rows (queue). */
+    private final boolean mCardStyle;
+    /** ⋮ / long-press context menu; null = no menu (the overflow button is hidden). */
+    @androidx.annotation.Nullable
+    private final OnRelatedLongClickListener mLongClickListener;
+    /**
+     * Video id to mark as "Now playing", or null for none. Only the queue list sets this - in the
+     * Up-next list the playing video isn't present at all.
+     */
+    private String mCurrentVideoId;
+
     /** The ⋮ button / long-press on a card: opens the video context menu. */
     public interface OnRelatedLongClickListener {
         void onRelatedLongClick(Video video);
     }
 
-    private final OnRelatedClickListener mClickListener;
-    @androidx.annotation.Nullable
-    private final OnRelatedPressListener mPressListener;
-    private final long mPressIntentMs;
-    private final boolean mCardStyle;
-    @androidx.annotation.Nullable
-    private final OnRelatedLongClickListener mLongClickListener;
-    private String mCurrentVideoId;
-
     public RelatedVideoAdapter(OnRelatedClickListener clickListener) {
         this(clickListener, null, 0);
     }
 
+    /** {@code pressListener} fires after {@code pressIntentMs} of a still finger; null/0 = off. */
     public RelatedVideoAdapter(OnRelatedClickListener clickListener,
             @androidx.annotation.Nullable OnRelatedPressListener pressListener, long pressIntentMs) {
         this(clickListener, pressListener, pressIntentMs, false, null);
     }
 
+    /** Full constructor; {@code cardStyle} = the full-width card layout used by the Up next list. */
     public RelatedVideoAdapter(OnRelatedClickListener clickListener,
             @androidx.annotation.Nullable OnRelatedPressListener pressListener, long pressIntentMs,
             boolean cardStyle, @androidx.annotation.Nullable OnRelatedLongClickListener longClickListener) {
@@ -72,6 +90,11 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
         mPressIntentMs = pressIntentMs;
     }
 
+    /**
+     * Marks one row as the playing one. Rebinds every row rather than diffing: the flag lives
+     * outside the {@link Video} objects, so {@link #DIFF_CALLBACK} (identity-based by design)
+     * cannot see it change, and both the OLD and the NEW current row need repainting.
+     */
     public void setCurrentVideoId(String videoId) {
         if (android.text.TextUtils.equals(mCurrentVideoId, videoId)) {
             return;
@@ -90,6 +113,8 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
         @Override
         @SuppressLint("DiffUtilEquals")
         public boolean areContentsTheSame(@NonNull Video oldItem, @NonNull Video newItem) {
+            // Video.equals() is identity-like (IDs only). A new instance with the same ID can
+            // carry refreshed metadata and must be rebound; the same instance needs no rebind.
             return oldItem == newItem;
         }
     };
@@ -129,14 +154,17 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
         @androidx.annotation.Nullable
         private final View mOverflow;
         private final boolean mCardStyle;
+        @androidx.annotation.Nullable
+        private final OnRelatedLongClickListener mLongClickListener;
         private Video mVideo;
 
-        @SuppressLint("ClickableViewAccessibility")
+        @SuppressLint("ClickableViewAccessibility") // observes only; the row's click still runs
         RelatedViewHolder(@NonNull View itemView, OnRelatedClickListener clickListener,
                 @androidx.annotation.Nullable OnRelatedPressListener pressListener, long pressIntentMs,
                 boolean cardStyle, @androidx.annotation.Nullable OnRelatedLongClickListener longClickListener) {
             super(itemView);
             mCardStyle = cardStyle;
+            mLongClickListener = longClickListener;
             mAvatar = itemView.findViewById(R.id.related_avatar);
             mOverflow = itemView.findViewById(R.id.related_overflow);
 
@@ -200,6 +228,11 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
 
             mTitle.setText(video.getTitle());
 
+            // Single subtitle line = "Channel • views • date" (Video.getSecondTitle()). Previously the
+            // channel showed twice - once as its own byline (getAuthor(), which is just the channel token
+            // extracted from the very same secondTitle) and again at the head of this metadata line, so
+            // the two lines were identical whenever views/date were absent. Fall back to the bare channel
+            // name when no secondTitle is available.
             CharSequence subtitle = video.getSecondTitle();
             if (subtitle == null || subtitle.length() == 0) {
                 subtitle = video.getAuthor();
@@ -239,6 +272,8 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
         }
 
         private void bindBadge(Video video, boolean isCurrent) {
+            // The playing row takes over the badge slot: in a queue the duration matters far less
+            // than knowing where you are, and this needs no extra view in the row layout.
             if (isCurrent) {
                 mBadge.setText(R.string.mobile_watch_queue_now_playing);
                 mBadge.setVisibility(View.VISIBLE);
@@ -275,13 +310,20 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
             int thumbQuality = MainUIData.instance(context).getThumbQuality();
             String thumbnailUrl = ClickbaitRemover.updateThumbnail(video, thumbQuality);
 
+            // NEWTUBE(net): downsampling happens on the DEVICE, so a 640px sddefault still crosses the
+            // wire in full before Glide throws most of it away. Ask the CDN for the row's actual size
+            // instead: 12 of these bind at once and the difference is ~1.3 MB vs ~300 KB per open.
             thumbnailUrl = ClickbaitRemover.fitThumbnail(thumbnailUrl, relatedThumbWidthPx(context));
 
+            // SCROLL-JANK FIX: opaque JPEG thumbs -> RGB_565 halves decode + GPU upload. The thumb view
+            // is fixed-dp-sized, so Glide already downsamples to it (no override needed). Only build the
+            // fallback request when its URL can actually differ from the primary (never at default quality).
             com.bumptech.glide.RequestBuilder<android.graphics.drawable.Drawable> request = Glide.with(context)
                     .load(thumbnailUrl)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .format(DecodeFormat.PREFER_RGB_565)
                     .centerCrop()
+                    // Fade network loads in over the placeholder; cache hits skip the transition.
                     .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade(150));
 
             String fallbackUrl = video.getCardImageUrl();
@@ -295,8 +337,10 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
             request.into(mThumbnail);
         }
 
+        /** Row thumb width in real pixels, so the CDN rendition is chosen for THIS screen's density. */
         private int relatedThumbWidthPx(Context context) {
             if (mCardStyle) {
+                // Edge-to-edge card: the thumbnail is as wide as the screen.
                 return context.getResources().getDisplayMetrics().widthPixels;
             }
             return context.getResources().getDimensionPixelSize(
