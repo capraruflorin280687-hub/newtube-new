@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/related_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingBottom="14dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/related_thumbnail_frame"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardBackgroundColor="@color/mobile_color_placeholder"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:layout_constraintDimensionRatio="16:9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/related_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/related_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="8dp"
+            android:background="@drawable/bg_video_badge"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="2dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="12:34"
+            tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/related_watch_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_gravity="bottom"
+            android:max="100"
+            android:progressBackgroundTint="@color/mobile_color_progress_track"
+            android:progressTint="@color/mobile_color_progress"
+            android:visibility="gone" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/related_avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="@dimen/mobile_watch_content_padding"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_related_avatar"
+        android:gravity="center"
+        android:textColor="@color/mobile_color_on_surface"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame"
+        tools:text="C" />
+
+    <TextView
+        android:id="@+id/related_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="2sp"
+        android:maxLines="2"
+        android:textColor="@color/mobile_color_on_surface"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/related_overflow"
+        app:layout_constraintStart_toEndOf="@id/related_avatar"
+        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame"
+        tools:text="A related video title that can wrap onto two lines" />
+
+    <TextView
+        android:id="@+id/related_subtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="3dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/mobile_color_on_surface_secondary"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toStartOf="@id/related_overflow"
+        app:layout_constraintStart_toEndOf="@id/related_avatar"
+        app:layout_constraintTop_toBottomOf="@id/related_title"
+        tools:text="Channel name • 1.2M views • 2 days ago" />
+
+    <ImageButton
+        android:id="@+id/related_overflow"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/mobile_player_more"
+        android:padding="12dp"
+        android:src="@drawable/ic_mobile_more_vert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
