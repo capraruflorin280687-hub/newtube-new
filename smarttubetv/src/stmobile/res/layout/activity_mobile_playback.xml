@@ -871,6 +871,39 @@
 
                     <!-- Save to playlist. Same action as gear -> More -> Save to playlist; it lives
                          here too because that is where YouTube puts it and where people look. -->
+                    <!-- Audio only: video track off, sound keeps playing and carries on to the next video. -->
+                    <LinearLayout
+                        android:id="@+id/mobile_watch_audio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/mobile_watch_pill_bg_touch"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="14dp">
+
+                        <ImageView
+                            android:id="@+id/mobile_watch_audio_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="@string/mobile_watch_audio_only"
+                            android:src="@drawable/ic_watch_audio_only"
+                            android:tint="@color/mobile_color_on_surface" />
+
+                        <TextView
+                            android:id="@+id/mobile_watch_audio_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/mobile_watch_audio_only"
+                            android:textColor="@color/mobile_color_on_surface"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/mobile_watch_save"
                         android:layout_width="wrap_content"
@@ -882,7 +915,8 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingHorizontal="12dp"
-                        android:paddingVertical="14dp">
+                        android:paddingVertical="14dp"
+                        android:visibility="gone">
 
                         <ImageView
                             android:id="@+id/mobile_watch_save_icon"
@@ -979,62 +1013,6 @@
                         android:textColor="@color/mobile_color_on_inverse_surface"
                         android:textSize="14sp"
                         app:cornerRadius="20dp" />
-
-                </LinearLayout>
-
-                <!-- Comments entry: opens the comments panel over this page. Hidden until the loaded
-                     metadata reports that comments are enabled (a non-null comments key).
-                     Rendered as a rounded surface card, like YouTube's comments teaser. -->
-                <LinearLayout
-                    android:id="@+id/mobile_watch_comments_entry"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/mobile_watch_content_padding"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/bg_watch_card"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="13dp"
-                    android:visibility="gone"
-                    tools:visibility="visible">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_watch_comment" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@string/mobile_comments_entry"
-                        android:textColor="@color/mobile_color_on_surface"
-                        android:textSize="14sp" />
-
-                    <!-- NEWTUBE(comments-panel): the total from the same /next ("1.8K"). -->
-                    <TextView
-                        android:id="@+id/mobile_watch_comments_count"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_weight="1"
-                        android:fontFeatureSettings="tnum"
-                        android:maxLines="1"
-                        android:textColor="@color/mobile_color_on_surface_secondary"
-                        android:textSize="14sp"
-                        tools:text="1.8K" />
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:contentDescription="@null"
-                        android:rotation="270"
-                        android:src="@drawable/ic_watch_expand" />
 
                 </LinearLayout>
 
