@@ -2118,7 +2118,30 @@ public class MobilePlaybackActivity extends MobileActivity
 
     @Override
     protected boolean shouldInsetContentForSystemBars() {
-        return layoutOrientation() != Configuration.ORIENTATION_LANDSCAPE;
+        // Immersive in both orientations: the bars are hidden, so nothing is kept clear of them.
+        return false;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && !mIsInPip && layoutOrientation() != Configuration.ORIENTATION_LANDSCAPE) {
+            applyPortraitImmersiveBars(); // a dialog, the keyboard or a swipe brought the bars back
+        }
+    }
+
+    /** Portrait watch page: status and navigation bars hidden (swipe to peek), video from the top edge. */
+    private void applyPortraitImmersiveBars() {
+        Window window = getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false);
+        androidx.core.view.WindowInsetsControllerCompat controller =
+                androidx.core.view.WindowCompat.getInsetsController(window, window.getDecorView());
+        controller.setSystemBarsBehavior(
+                androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        controller.hide(WindowInsetsCompat.Type.systemBars());
     }
 
     /**
@@ -2337,12 +2360,13 @@ public class MobilePlaybackActivity extends MobileActivity
                 getWindow().getDecorView().setBackgroundColor(Color.BLACK);
             }
         } else {
-            applyDisplayCutoutMode(false);
-            // Watch page: standard phone chrome (solid status bar, video box below it -
+            applyDisplayCutoutMode(true);
+            // Watch page: immersive too (bars hidden, video from the top edge). The old
+            // standard chrome (solid status bar, video box below it -
             // YouTube-style). Replaces the old transparent-status-bar-over-the-video design,
             // whose edge-to-edge flags survived the fullscreen round-trip and left the status
-            // bar overlapping the video (and leaked into the other screens).
-            applyMobileSystemBars();
+            // bar overlapping the video (and leaked into the other screens). Replaced by:
+            applyPortraitImmersiveBars();
             // Keep the safe status-bar inset, but paint it the same black as the video surface.
             // Otherwise the app's #0F0F0F window background reads as a stray top margin above
             // the #000000 player on cutout devices with a tall safe inset (notably Pixel). Modern
