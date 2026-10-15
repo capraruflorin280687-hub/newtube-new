@@ -1085,6 +1085,8 @@ public class MobilePlaybackActivity extends MobileActivity
             return;
         }
 
+        applyFillForOrientation(orientation);
+
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mVideoArea.getLayoutParams();
 
         // Pinch-zoom is a fullscreen gesture (the portrait 16:9 box keeps its two-finger touches
@@ -8002,6 +8004,19 @@ public class MobilePlaybackActivity extends MobileActivity
     }
 
     /** ⋮ / long-press on an Up next card: the same context menu as the Home cards. */
+    private int mFillOrientation = -1;
+
+    private void applyFillForOrientation(int orientation) {
+        if (orientation == mFillOrientation) {
+            return;
+        }
+        mFillOrientation = orientation;
+        int mode = orientation == Configuration.ORIENTATION_LANDSCAPE
+                ? RESIZE_MODE_FIT_BOTH : RESIZE_MODE_DEFAULT;
+        PlayerData.instance(this).setResizeMode(mode);
+        setResizeMode(mode);
+    }
+
     private void onRelatedLongClicked(Video video) {
         if (mPresenter != null && video != null) {
             mPresenter.onSuggestionItemLongClicked(video);
