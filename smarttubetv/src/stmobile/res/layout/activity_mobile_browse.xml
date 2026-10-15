@@ -80,7 +80,7 @@
         android:id="@+id/mobile_content_swipe"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/mobile_bottom_nav"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mobile_title_bar">
@@ -91,7 +91,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingHorizontal="@dimen/mobile_card_spacing"
-            android:paddingBottom="@dimen/mobile_card_spacing"
+            android:paddingBottom="72dp"
             android:scrollbars="vertical"
             tools:listitem="@layout/item_video_card" />
 
@@ -349,7 +349,8 @@
         android:id="@+id/mobile_bottom_nav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/mobile_color_background"
+        android:background="@color/mobile_color_background_scrim"
+        app:elevation="0dp"
         app:itemIconSize="24dp"
         app:itemIconTint="@color/mobile_bottom_nav_item"
         app:itemTextAppearanceActive="@style/MobileBottomNavText"
