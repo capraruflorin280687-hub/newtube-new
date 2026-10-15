@@ -267,6 +267,12 @@ public class MobilePlaybackActivity extends MobileActivity
     private View mWatchSave;
     private ImageView mWatchSaveIcon;
     private TextView mWatchSaveLabel;
+    // Audio only: the user's own toggle (the background flag below is the system's one).
+    private View mWatchAudio;
+    private ImageView mWatchAudioIcon;
+    private TextView mWatchAudioLabel;
+    private boolean mAudioOnlyMode;
+    private int mPlaybackModeBeforeAudioOnly = -1;
     private View mWatchDownload;
     private ImageView mWatchDownloadIcon;
     private TextView mWatchDownloadLabel;
@@ -734,6 +740,9 @@ public class MobilePlaybackActivity extends MobileActivity
         mWatchSave = findViewById(R.id.mobile_watch_save);
         mWatchSaveIcon = findViewById(R.id.mobile_watch_save_icon);
         mWatchSaveLabel = findViewById(R.id.mobile_watch_save_label);
+        mWatchAudio = findViewById(R.id.mobile_watch_audio);
+        mWatchAudioIcon = findViewById(R.id.mobile_watch_audio_icon);
+        mWatchAudioLabel = findViewById(R.id.mobile_watch_audio_label);
         mWatchDownload = findViewById(R.id.mobile_watch_download);
         mWatchDownloadIcon = findViewById(R.id.mobile_watch_download_icon);
         mWatchDownloadLabel = findViewById(R.id.mobile_watch_download_label);
@@ -1035,6 +1044,10 @@ public class MobilePlaybackActivity extends MobileActivity
                 openPlayerOption(R.id.action_playlist_add, false);
             }
         });
+        // Audio only: no video, just the sound - and it keeps going to the next video.
+        if (mWatchAudio != null) {
+            mWatchAudio.setOnClickListener(v -> toggleAudioOnly());
+        }
         // Download: the quality picker, or the download's own menu once it is on the device.
         mWatchDownload.setOnClickListener(v -> onDownloadTapped());
         DownloadRegistry.instance(this).addListener(mDownloadsListener);
@@ -1223,7 +1236,7 @@ public class MobilePlaybackActivity extends MobileActivity
 
         // An engine restart (error fix, network flap) while backgrounded builds a FRESH selector
         // with video re-enabled; re-apply the audio-only drop so the restart doesn't resume video.
-        if (mBackgroundAudioMode) {
+        if (mBackgroundAudioMode || mAudioOnlyMode) {
             mExoPlayerController.setVideoTrackDisabled(true);
         }
 
@@ -1645,7 +1658,7 @@ public class MobilePlaybackActivity extends MobileActivity
     private void setBackgroundAudioMode(boolean enabled) {
         mBackgroundAudioMode = enabled;
         if (mExoPlayerController != null) {
-            mExoPlayerController.setVideoTrackDisabled(enabled);
+            mExoPlayerController.setVideoTrackDisabled(enabled || mAudioOnlyMode);
             // NEWTUBE(keep-codec): no decoder kept for the next open while nothing is on screen.
             mExoPlayerController.onBackgroundAudio(enabled);
         }
@@ -1673,8 +1686,62 @@ public class MobilePlaybackActivity extends MobileActivity
         }
     }
 
+    /**
+     * "Audio only" pill: drop the video renderer (nothing is downloaded or decoded for the picture)
+     * and keep the sound. The flag survives the next video (the track selector and a restarted
+     * engine both re-apply it), and a stop-at-end playback mode is swapped for "play next" while
+     * it is on, so the music carries on from one video to the next.
+     */
+    private void toggleAudioOnly() {
+        mAudioOnlyMode = !mAudioOnlyMode;
+        PlayerData playerData = PlayerData.instance(this);
+        if (mAudioOnlyMode) {
+            int mode = playerData.getPlaybackMode();
+            if (mode == PlayerConstants.PLAYBACK_MODE_PAUSE || mode == PlayerConstants.PLAYBACK_MODE_CLOSE) {
+                mPlaybackModeBeforeAudioOnly = mode;
+                playerData.setPlaybackMode(PlayerConstants.PLAYBACK_MODE_ALL);
+            }
+        } else {
+            restorePlaybackModeAfterAudioOnly();
+        }
+        if (mExoPlayerController != null) {
+            mExoPlayerController.setVideoTrackDisabled(mAudioOnlyMode || mBackgroundAudioMode);
+        }
+        if (mAudioOnlyMode) {
+            // The thumbnail stays over the (now frameless) video while only the sound plays.
+            if (mWatchVideo != null) {
+                mStillVideoId = null;
+                maybeShowLoadingStill(mWatchVideo);
+            }
+        } else {
+            // Video is back: the still lifts at its first frame, like any new open.
+            armStillForReady();
+        }
+        updateAudioOnlyUi();
+    }
+
+    private void restorePlaybackModeAfterAudioOnly() {
+        if (mPlaybackModeBeforeAudioOnly != -1) {
+            PlayerData.instance(this).setPlaybackMode(mPlaybackModeBeforeAudioOnly);
+            mPlaybackModeBeforeAudioOnly = -1;
+        }
+    }
+
+    private void updateAudioOnlyUi() {
+        if (mWatchAudioIcon != null) {
+            int color = getColorInt(mAudioOnlyMode ? R.color.mobile_color_progress : R.color.mobile_color_on_surface);
+            mWatchAudioIcon.setImageTintList(android.content.res.ColorStateList.valueOf(color));
+            if (mWatchAudioLabel != null) {
+                mWatchAudioLabel.setTextColor(color);
+                mWatchAudioLabel.setText(mAudioOnlyMode
+                        ? R.string.mobile_watch_audio_only_on : R.string.mobile_watch_audio_only);
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
+        restorePlaybackModeAfterAudioOnly();
         DownloadRegistry.instance(this).removeListener(mDownloadsListener);
         cancelAutoHide();
         mOrientationHandBack.disarm();
