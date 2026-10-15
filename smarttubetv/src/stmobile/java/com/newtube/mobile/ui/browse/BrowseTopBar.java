@@ -1,21 +1,22 @@
 package com.newtube.mobile.ui.browse;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 import com.liskovsoft.smartyoutubetv2.tv.R;
 
 /**
- * NEWTUBE(you-subscreen): Browse's top bar. On a bottom-nav tab it is the "NewTube" wordmark; a
- * section opened from a You row (Sports, Playlists, ...) is a sub-screen of You, so it gets a back
- * arrow and the section's name - like YouTube's You sub-pages - instead of a wordmark that gave
- * no hint where the user was or that back returns to You.
+ * Browse's top bar. On a bottom-nav tab it shows the logo; a section opened from a You row
+ * (Sports, Playlists, ...) gets a back arrow and the section's name instead.
  */
 final class BrowseTopBar {
-    private static final float WORDMARK_SP = 22f;
     private static final float SUBSCREEN_TITLE_SP = 20f;
+    private static final float TAB_TITLE_SP = 22f;
 
     private final TextView mTitle;
     private final View mBack;
@@ -31,15 +32,24 @@ final class BrowseTopBar {
                 .getDimensionPixelSize(R.dimen.mobile_dialog_title_inset_with_back);
     }
 
-    /**
-     * A tab shows the wordmark; a sub-screen shows the back arrow and {@code title} (the wordmark
-     * text if the section came without one - the arrow is what matters).
-     */
     void show(boolean subScreen, CharSequence title) {
         mBack.setVisibility(subScreen ? View.VISIBLE : View.GONE);
-        mTitle.setText(subScreen && title != null && title.length() > 0
-                ? title : mTitle.getContext().getString(R.string.app_name));
-        mTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, subScreen ? SUBSCREEN_TITLE_SP : WORDMARK_SP);
+
+        boolean showLogo = !subScreen;
+        CharSequence appName = mTitle.getContext().getString(R.string.app_name);
+
+        if (showLogo) {
+            Drawable logo = ContextCompat.getDrawable(mTitle.getContext(), R.drawable.ic_mobile_logo);
+            mTitle.setText("");
+            mTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(logo, null, null, null);
+            mTitle.setContentDescription(appName);
+        } else {
+            mTitle.setText(title != null && title.length() > 0 ? title : appName);
+            mTitle.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, null);
+            mTitle.setContentDescription(null);
+        }
+
+        mTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, subScreen ? SUBSCREEN_TITLE_SP : TAB_TITLE_SP);
         mTitle.setPaddingRelative(subScreen ? mBesideBackInset : mWordmarkInset,
                 mTitle.getPaddingTop(), mTitle.getPaddingEnd(), mTitle.getPaddingBottom());
     }
