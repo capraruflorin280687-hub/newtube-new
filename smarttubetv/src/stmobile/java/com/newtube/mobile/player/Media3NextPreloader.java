@@ -292,10 +292,9 @@ final class Media3NextPreloader {
                 || player.isCurrentMediaItemLive()) {
             return false;
         }
+        // Audio-only (the user's pill, or the screen off) preloads too: the preload selector copies
+        // the disabled video type, so only the next track's audio is fetched - no gap between songs.
         DefaultTrackSelector.Parameters parameters = selector.getParameters();
-        if (parameters.disabledTrackTypes.contains(C.TRACK_TYPE_VIDEO)) {
-            return false; // background audio-only mode
-        }
         for (TrackSelectionOverride override : parameters.overrides.values()) {
             if (override.getType() == C.TRACK_TYPE_VIDEO) {
                 return false; // manual quality stays entirely under foreground ownership
