@@ -65,7 +65,7 @@
         android:layout_height="36dp"
         android:layout_marginStart="@dimen/mobile_watch_content_padding"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_related_avatar"
+        android:background="@drawable/bg_comment_skeleton_avatar"
         android:gravity="center"
         android:textColor="@color/mobile_color_on_surface"
         android:textSize="16sp"
@@ -104,17 +104,4 @@
         app:layout_constraintEnd_toStartOf="@id/related_overflow"
         app:layout_constraintStart_toEndOf="@id/related_avatar"
         app:layout_constraintTop_toBottomOf="@id/related_title"
-        tools:text="Channel name • 1.2M views • 2 days ago" />
-
-    <ImageButton
-        android:id="@+id/related_overflow"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/mobile_player_more"
-        android:padding="12dp"
-        android:src="@drawable/ic_mobile_more_vert"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        tools:text="Channel name • 1.2M views • 2 days ago"
