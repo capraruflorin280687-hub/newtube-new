@@ -963,9 +963,6 @@ public class Media3PlayerController implements Player.Listener {
      * so the track selector has a single owner for its parameters.
      */
     public void setVideoTrackDisabled(boolean disabled) {
-        if (disabled && mNextPreloader != null) {
-            mNextPreloader.cancel("background-audio");
-        }
         if (mTrackAdapter != null) {
             mTrackAdapter.setVideoTrackDisabled(disabled);
         }
