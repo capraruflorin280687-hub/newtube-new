@@ -25,7 +25,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        run: ./gradlew --no-daemon --stacktrace :smarttubetv:assembleStmobileDebug
+        run: ./gradlew --no-daemon :smarttubetv:assembleStmobileDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
