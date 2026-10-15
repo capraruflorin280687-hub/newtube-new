@@ -175,6 +175,8 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
         private final TextView mTitle;
         private final TextView mMeta;
         private final View mOverflow;
+        @androidx.annotation.Nullable
+        private final TextView mAvatar;
         private Video mVideo;
         private String mBoundThumbUrl;
 
@@ -188,6 +190,7 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             mTitle = itemView.findViewById(R.id.video_title);
             mMeta = itemView.findViewById(R.id.video_meta);
             mOverflow = itemView.findViewById(R.id.video_overflow);
+            mAvatar = itemView.findViewById(R.id.video_avatar);
 
             itemView.setOnClickListener(v -> {
                 if (mVideo != null && clickListener != null) {
@@ -230,6 +233,7 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             CharSequence meta = video.getSecondTitle();
             mMeta.setText(meta == null || meta.length() == 0 ? video.getAuthor() : meta);
 
+            bindAvatar(video);
             bindBadge(context, video);
             bindProgress(video);
             bindReadiness(video);
@@ -250,6 +254,7 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             CharSequence meta = video.getSecondTitle();
             mMeta.setText(meta == null || meta.length() == 0 ? video.getAuthor() : meta);
 
+            bindAvatar(video);
             bindBadge(context, video);
             bindProgress(video);
             bindReadiness(video);
@@ -258,6 +263,27 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             if (thumbnailUrl == null ? mBoundThumbUrl != null : !thumbnailUrl.equals(mBoundThumbUrl)) {
                 bindThumbnail(context, video);
             }
+        }
+
+        /** First letter of the channel on a round disc (the feed items carry no avatar image). */
+        private void bindAvatar(Video video) {
+            if (mAvatar == null) {
+                return;
+            }
+            String author = video.getAuthor();
+            if (author != null) {
+                author = author.trim();
+            }
+            if (author == null || author.isEmpty()) {
+                mAvatar.setVisibility(View.INVISIBLE);
+                return;
+            }
+            int cp = author.codePointAt(0);
+            if (cp == '@' && author.length() > 1) {
+                cp = author.codePointAt(1);
+            }
+            mAvatar.setText(new String(Character.toChars(cp)).toUpperCase());
+            mAvatar.setVisibility(View.VISIBLE);
         }
 
         private void bindBadge(Context context, Video video) {
