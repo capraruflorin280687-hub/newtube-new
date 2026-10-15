@@ -2,7 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/related_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -42,9 +41,7 @@
             android:textColor="@android:color/white"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:visibility="gone"
-            tools:text="12:34"
-            tools:visibility="visible" />
+            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/related_watch_progress"
@@ -71,8 +68,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame"
-        tools:text="C" />
+        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame" />
 
     <TextView
         android:id="@+id/related_title"
@@ -88,8 +84,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/related_overflow"
         app:layout_constraintStart_toEndOf="@id/related_avatar"
-        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame"
-        tools:text="A related video title that can wrap onto two lines" />
+        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame" />
 
     <TextView
         android:id="@+id/related_subtitle"
@@ -103,5 +98,17 @@
         android:textSize="13sp"
         app:layout_constraintEnd_toStartOf="@id/related_overflow"
         app:layout_constraintStart_toEndOf="@id/related_avatar"
-        app:layout_constraintTop_toBottomOf="@id/related_title"
-        tools:text="Channel name • 1.2M views • 2 days ago"
+        app:layout_constraintTop_toBottomOf="@id/related_title" />
+
+    <ImageButton
+        android:id="@+id/related_overflow"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/mobile_player_more"
+        android:padding="12dp"
+        android:src="@drawable/ic_mobile_more_vert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/related_thumbnail_frame" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
