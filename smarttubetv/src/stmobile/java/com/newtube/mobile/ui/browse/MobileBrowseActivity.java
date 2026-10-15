@@ -245,6 +245,39 @@ public class MobileBrowseActivity extends MobileActivity
         return false;
     }
 
+    /** Immersive home: content draws edge to edge, nothing is kept clear of the (hidden) bars. */
+    @Override
+    protected boolean shouldInsetContentForSystemBars() {
+        return false;
+    }
+
+    /** Replaces the standard phone chrome: status and navigation bars hidden, swipe to peek. */
+    @Override
+    protected void applyFullscreenModeIfNeeded() {
+        applyImmersiveBars();
+    }
+
+    private void applyImmersiveBars() {
+        android.view.Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // Hiding the bars alone leaves a black strip over the camera cutout.
+            android.view.WindowManager.LayoutParams attributes = window.getAttributes();
+            int mode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+                    ? android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
+                    : android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            if (attributes.layoutInDisplayCutoutMode != mode) {
+                attributes.layoutInDisplayCutoutMode = mode;
+                window.setAttributes(attributes);
+            }
+        }
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false);
+        androidx.core.view.WindowInsetsControllerCompat controller =
+                androidx.core.view.WindowCompat.getInsetsController(window, window.getDecorView());
+        controller.setSystemBarsBehavior(
+                androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        controller.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1839,6 +1872,7 @@ public class MobileBrowseActivity extends MobileActivity
         super.onWindowFocusChanged(hasFocus);
 
         if (hasFocus) {
+            applyImmersiveBars(); // a dialog, the keyboard or a swipe may have brought the bars back
             SystemPipBridge.restoreFromLauncher(this);
         }
     }
