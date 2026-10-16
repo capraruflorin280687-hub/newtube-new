@@ -5515,10 +5515,10 @@ public class MobilePlaybackActivity extends MobileActivity
     private boolean mMorphOverOwnBackdrop;
     /** NEWTUBE(motion): an open/expand morph is posted but has not placed its first frame yet. */
     private boolean mMorphStartPending;
-    private static final int MINI_CARD_WIDTH_DP = 180;
+    private static final int MINI_CARD_WIDTH_DP = 224;
     /** NEWTUBE(motion): see the mini expansion in onResume. */
     private static final long HOST_CARD_FOLD_WAIT_MS = 50;
-    private static final int MINI_CARD_HEIGHT_DP = 102;
+    private static final int MINI_CARD_HEIGHT_DP = 126;
     /**
      * NEWTUBE(motion): the corner radius and elevation the video box morphs to - the mini card's
      * (mobile_mini_player_overlay.xml) and a feed card thumbnail's. The box used to stay square with
