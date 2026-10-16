@@ -678,8 +678,9 @@ public class MobilePlaybackActivity extends MobileActivity
         // NEWTUBE(seek bar): the video box leaves its children unclipped so that the seek bar's dot
         // can hang over the page - but the picture must stay in the box: zoomed to fill, a vertical
         // video's frame is far taller than the portrait box and spilled over the page.
-        mPlayerView.setOutlineProvider(android.view.ViewOutlineProvider.BOUNDS);
         mPlayerView.setClipToOutline(true);
+        applyVideoCorners(layoutOrientation());
+        mPlayerView.addOnLayoutChangeListener((v, l, t, r, b, oldL, oldT, oldR, oldB) -> v.invalidateOutline());
         mYouTubeOverlay = findViewById(R.id.mobile_player_yt_overlay);
         mControlsRoot = findViewById(R.id.mobile_controls_root);
         mTopScrim = findViewById(R.id.mobile_player_top_scrim);
@@ -1099,6 +1100,7 @@ public class MobilePlaybackActivity extends MobileActivity
         }
 
         applyFillForOrientation(orientation);
+        applyVideoCorners(orientation);
 
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mVideoArea.getLayoutParams();
 
@@ -8132,6 +8134,25 @@ public class MobilePlaybackActivity extends MobileActivity
         if (getResizeMode() != saved) {
             setResizeMode(saved);
         }
+    }
+
+    /** Portrait: the picture gets slightly rounded corners; fullscreen and PiP stay square. */
+    private void applyVideoCorners(int orientation) {
+        if (mPlayerView == null) {
+            return;
+        }
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE || mIsInPip) {
+            mPlayerView.setOutlineProvider(android.view.ViewOutlineProvider.BOUNDS);
+        } else {
+            final float radius = getResources().getDimension(R.dimen.mobile_video_corner_radius);
+            mPlayerView.setOutlineProvider(new android.view.ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, android.graphics.Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                }
+            });
+        }
+        mPlayerView.invalidateOutline();
     }
 
     private void onRelatedLongClicked(Video video) {
