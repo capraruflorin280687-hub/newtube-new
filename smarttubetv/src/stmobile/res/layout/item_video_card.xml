@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:cardBackgroundColor="@color/mobile_color_placeholder"
-            app:cardCornerRadius="0dp"
+            app:cardCornerRadius="@dimen/mobile_video_corner_radius"
             app:cardElevation="0dp"
             app:layout_constraintDimensionRatio="16:9"
             app:layout_constraintEnd_toEndOf="parent"
