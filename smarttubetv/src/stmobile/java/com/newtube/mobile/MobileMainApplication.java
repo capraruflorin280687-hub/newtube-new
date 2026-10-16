@@ -698,7 +698,7 @@ public class MobileMainApplication extends MainApplication {
         // instead of the TV flow that downloaded the APK in silence and pinned an "Update" section.
         // TV never calls this (AppUpdatePresenter). A -Pfdroid build has no updater at all.
         com.liskovsoft.smartyoutubetv2.common.app.presenters.dialogs.AppUpdatePresenter.setInAppUpdatesDisabled(
-                !com.liskovsoft.smartyoutubetv2.tv.BuildConfig.IN_APP_UPDATES);
+                true); // no update check, dialog, row or notice at all
         com.liskovsoft.smartyoutubetv2.common.app.presenters.dialogs.AppUpdatePresenter.setPhoneUpdates(
                 new com.liskovsoft.smartyoutubetv2.common.app.presenters.dialogs.AppUpdatePresenter.PhoneUpdates() {
                     @Override
