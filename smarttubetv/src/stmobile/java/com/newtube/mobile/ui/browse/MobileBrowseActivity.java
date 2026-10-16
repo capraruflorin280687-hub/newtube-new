@@ -365,6 +365,9 @@ public class MobileBrowseActivity extends MobileActivity
     private View[] mTopBarViews;
 
     private void setupAutoHideBars() {
+        // Matte bottom bar: the background colour at ~70% (the layout's lighter scrim was too see-through).
+        mBottomNav.setBackgroundColor(androidx.core.graphics.ColorUtils.setAlphaComponent(
+                getColorInt(R.color.mobile_color_background), 0xB3));
         mTopBarViews = new View[] {
                 findViewById(R.id.mobile_title_back), findViewById(R.id.mobile_title_bar),
                 findViewById(R.id.mobile_cast_button), findViewById(R.id.mobile_search_button),
