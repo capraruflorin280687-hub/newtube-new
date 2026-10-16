@@ -1241,6 +1241,9 @@ public class MobilePlaybackActivity extends MobileActivity
         if (mBackgroundAudioMode || mAudioOnlyMode) {
             mExoPlayerController.setVideoTrackDisabled(true);
         }
+        if (mAudioOnlyMode) {
+            mExoPlayerController.setLowAudioBitrate(true);
+        }
 
         mPlayer = mPlayerInitializer.createPlayer(
                 trackSelector, mExoPlayerController.getMediaSourceFactory().getBandwidthMeter());
@@ -1708,6 +1711,7 @@ public class MobilePlaybackActivity extends MobileActivity
         }
         if (mExoPlayerController != null) {
             mExoPlayerController.setVideoTrackDisabled(mAudioOnlyMode || mBackgroundAudioMode);
+            mExoPlayerController.setLowAudioBitrate(mAudioOnlyMode);
         }
         if (mAudioOnlyMode) {
             // The thumbnail stays over the (now frameless) video while only the sound plays.
