@@ -90,10 +90,23 @@ public final class DownloadPicker {
         AppDialogPresenter dialog = AppDialogPresenter.instance(context);
         DownloadRegistry registry = DownloadRegistry.instance(context);
 
+        // Audio (M4A) first, then the Video rungs: one clear choice between the two.
+        List<DownloadOption> ordered = new java.util.ArrayList<>();
         for (DownloadOption option : options) {
+            if (option.isAudioOnly()) {
+                ordered.add(option);
+            }
+        }
+        for (DownloadOption option : options) {
+            if (!option.isAudioOnly()) {
+                ordered.add(option);
+            }
+        }
+
+        for (DownloadOption option : ordered) {
             String label = option.isAudioOnly()
-                    ? context.getString(R.string.mobile_download_audio_only)
-                    : option.qualityLabel;
+                    ? context.getString(R.string.mobile_download_choice_audio)
+                    : context.getString(R.string.mobile_download_choice_video, option.qualityLabel);
             String format = option.isAudioOnly() ? "M4A" : "MP4";
             String size = DownloadOptions.formatBytes(option.totalBytes);
             String description = size.isEmpty() ? format : format + MetaSeparator.DOT + size;
