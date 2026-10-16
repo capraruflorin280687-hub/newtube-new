@@ -367,7 +367,8 @@ public class MobileBrowseActivity extends MobileActivity
     private void setupAutoHideBars() {
         mTopBarViews = new View[] {
                 findViewById(R.id.mobile_title_back), findViewById(R.id.mobile_title_bar),
-                findViewById(R.id.mobile_cast_button), findViewById(R.id.mobile_search_button)};
+                findViewById(R.id.mobile_cast_button), findViewById(R.id.mobile_search_button),
+                findViewById(R.id.mobile_top_bar_bg)};
         final float density = getResources().getDisplayMetrics().density;
         final int hideAfter = Math.round(24 * density);
         final int showAfter = Math.round(12 * density);
