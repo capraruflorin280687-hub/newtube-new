@@ -15,6 +15,31 @@
     the system windows (solid app-colored status/nav bars), so this layout never renders
     under the bars regardless of what the player did to the display in between. -->
 
+    <!-- Pull-to-refresh drives BrowsePresenter.refresh() - also the natural retry
+         gesture when a section shows the error placeholder (the error overlay doesn't
+         consume touches, so the pull still reaches this layout). -->
+    <com.newtube.mobile.ui.common.HapticSwipeRefreshLayout
+        android:id="@+id/mobile_content_swipe"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mobile_content_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/mobile_card_spacing"
+            android:paddingTop="@dimen/mobile_title_bar_height"
+            android:paddingBottom="72dp"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_video_card" />
+
+    </com.newtube.mobile.ui.common.HapticSwipeRefreshLayout>
+
     <!-- NEWTUBE(you-subscreen): back arrow shown (with the section's name in the title bar) only
          while a section opened from a You row is on screen - BrowseTopBar. GONE otherwise, and a
          GONE view collapses to a point at the start, so the wordmark keeps its 16dp inset. -->
@@ -72,30 +97,6 @@
         android:src="@drawable/ic_mobile_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/mobile_title_bar" />
-
-    <!-- Pull-to-refresh drives BrowsePresenter.refresh() - also the natural retry
-         gesture when a section shows the error placeholder (the error overlay doesn't
-         consume touches, so the pull still reaches this layout). -->
-    <com.newtube.mobile.ui.common.HapticSwipeRefreshLayout
-        android:id="@+id/mobile_content_swipe"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mobile_title_bar">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/mobile_content_grid"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/mobile_card_spacing"
-            android:paddingBottom="72dp"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/item_video_card" />
-
-    </com.newtube.mobile.ui.common.HapticSwipeRefreshLayout>
 
     <include
         layout="@layout/mobile_feed_skeleton"
