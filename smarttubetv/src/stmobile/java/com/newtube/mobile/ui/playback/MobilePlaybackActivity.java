@@ -8110,9 +8110,11 @@ public class MobilePlaybackActivity extends MobileActivity
             return;
         }
         mFillOrientation = orientation;
+        // Landscape fullscreen fills the screen (shown only, never saved: the saved mode is the
+        // user's own zoom pick). Portrait shows that saved pick - so a zoom chosen in the video
+        // zoom setting or by pinching survives the next video and every restart of the player.
         int mode = orientation == Configuration.ORIENTATION_LANDSCAPE
-                ? RESIZE_MODE_FIT_BOTH : RESIZE_MODE_DEFAULT;
-        PlayerData.instance(this).setResizeMode(mode);
+                ? RESIZE_MODE_FIT_BOTH : PlayerData.instance(this).getResizeMode();
         setResizeMode(mode);
     }
 
