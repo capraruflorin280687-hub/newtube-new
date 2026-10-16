@@ -7551,6 +7551,7 @@ public class MobilePlaybackActivity extends MobileActivity
 
         if (isNewVideo) {
             mWatchVideoId = item.videoId;
+            restoreSavedZoom();
             mWatchMetadataGate.open(item.videoId);
             mRelatedRenderGate.reset();
             Utils.removeCallbacks(mReleaseWatchMetadata);
@@ -8116,6 +8117,21 @@ public class MobilePlaybackActivity extends MobileActivity
         int mode = orientation == Configuration.ORIENTATION_LANDSCAPE
                 ? RESIZE_MODE_FIT_BOTH : PlayerData.instance(this).getResizeMode();
         setResizeMode(mode);
+    }
+
+    /**
+     * Every new video starts in the zoom the user saved (video zoom setting / pinch), so nothing
+     * that rebuilt the player view can leave a video back on the default fit. Landscape keeps
+     * its own fill (see applyFillForOrientation).
+     */
+    private void restoreSavedZoom() {
+        if (layoutOrientation() == Configuration.ORIENTATION_LANDSCAPE) {
+            return;
+        }
+        int saved = PlayerData.instance(this).getResizeMode();
+        if (getResizeMode() != saved) {
+            setResizeMode(saved);
+        }
     }
 
     private void onRelatedLongClicked(Video video) {
