@@ -6447,7 +6447,8 @@ public class MobilePlaybackActivity extends MobileActivity
         if (mRelatedSkeleton == null) {
             return;
         }
-        mRelatedSkeleton.setVisibility(View.VISIBLE); // it shimmers itself (ShimmerLinearLayout)
+        // Skeleton placeholders disabled: keep it hidden, only arm the timeout below.
+        mRelatedSkeleton.setVisibility(View.GONE);
         Utils.removeCallbacks(mHideSkeletonTimeout);
         Utils.postDelayed(mHideSkeletonTimeout, SKELETON_TIMEOUT_MS);
     }
