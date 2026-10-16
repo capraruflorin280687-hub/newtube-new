@@ -40,6 +40,17 @@
 
     </com.newtube.mobile.ui.common.HapticSwipeRefreshLayout>
 
+    <!-- One uniform backdrop for the whole top bar (back / logo / cast / search), slightly see-through. -->
+    <View
+        android:id="@+id/mobile_top_bar_bg"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/mobile_title_bar_height"
+        android:alpha="0.85"
+        android:background="@color/mobile_color_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- NEWTUBE(you-subscreen): back arrow shown (with the section's name in the title bar) only
          while a section opened from a You row is on screen - BrowseTopBar. GONE otherwise, and a
          GONE view collapses to a point at the start, so the wordmark keeps its 16dp inset. -->
@@ -60,7 +71,6 @@
         android:id="@+id/mobile_title_bar"
         android:layout_width="0dp"
         android:layout_height="@dimen/mobile_title_bar_height"
-        android:background="@color/mobile_color_background"
         android:ellipsize="end"
         android:gravity="center_vertical|start"
         android:maxLines="1"
@@ -267,8 +277,8 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mobile_mini_player"
         android:contentDescription="@string/mobile_mini_expand"
-        android:layout_width="180dp"
-        android:layout_height="102dp"
+        android:layout_width="224dp"
+        android:layout_height="126dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="12dp"
         android:clickable="true"
