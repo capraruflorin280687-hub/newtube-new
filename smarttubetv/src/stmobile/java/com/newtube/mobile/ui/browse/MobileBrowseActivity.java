@@ -355,6 +355,85 @@ public class MobileBrowseActivity extends MobileActivity
         setupMiniPlayerBar();
         // NEWTUBE(mini-inset): the last card can scroll clear of the docked mini-player.
         com.newtube.mobile.ui.playback.MiniPlayerListInset.attach(mMiniPlayerBar, mContentGrid);
+        setupAutoHideBars();
+    }
+
+    // ---- Auto-hide bars: the top bar and the bottom nav slide away on scroll down and come
+    // ---- back on scroll up (or at the top of the list).
+    private boolean mBarsHidden;
+    private int mBarScrollAccum;
+    private View[] mTopBarViews;
+
+    private void setupAutoHideBars() {
+        mTopBarViews = new View[] {
+                findViewById(R.id.mobile_title_back), findViewById(R.id.mobile_title_bar),
+                findViewById(R.id.mobile_cast_button), findViewById(R.id.mobile_search_button)};
+        final float density = getResources().getDisplayMetrics().density;
+        final int hideAfter = Math.round(24 * density);
+        final int showAfter = Math.round(12 * density);
+        // The list now starts under the top bar: the refresh spinner must appear below it.
+        int bar = getResources().getDimensionPixelSize(R.dimen.mobile_title_bar_height);
+        mContentSwipe.setProgressViewOffset(false, bar, bar + Math.round(64 * density));
+        mContentGrid.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (!recyclerView.canScrollVertically(-1)) {
+                    mBarScrollAccum = 0;
+                    showBars(true);
+                    return;
+                }
+                if (dy > 0) {
+                    mBarScrollAccum = Math.max(0, mBarScrollAccum) + dy;
+                    if (mBarScrollAccum > hideAfter) {
+                        hideBars();
+                    }
+                } else if (dy < 0) {
+                    mBarScrollAccum = Math.min(0, mBarScrollAccum) + dy;
+                    if (mBarScrollAccum < -showAfter) {
+                        showBars(true);
+                    }
+                }
+            }
+        });
+        // A reloaded list starts at the top: never leave an empty strip where the bar was.
+        mContentGrid.addOnLayoutChangeListener((v, l, t, r, b, oldL, oldT, oldR, oldB) -> {
+            if (mBarsHidden && !mContentGrid.canScrollVertically(-1)) {
+                showBars(false);
+            }
+        });
+    }
+
+    private void hideBars() {
+        if (mBarsHidden || mYouShowing || mTopBarViews == null) {
+            return;
+        }
+        mBarsHidden = true;
+        float up = -mTopBarViews[1].getHeight();
+        for (View view : mTopBarViews) {
+            view.animate().translationY(up).setDuration(180).start();
+        }
+        mBottomNav.animate().translationY(mBottomNav.getHeight()).setDuration(180).start();
+    }
+
+    private void showBars(boolean animate) {
+        if (!mBarsHidden || mTopBarViews == null) {
+            return;
+        }
+        mBarsHidden = false;
+        for (View view : mTopBarViews) {
+            view.animate().cancel();
+            if (animate) {
+                view.animate().translationY(0).setDuration(180).start();
+            } else {
+                view.setTranslationY(0);
+            }
+        }
+        mBottomNav.animate().cancel();
+        if (animate) {
+            mBottomNav.animate().translationY(0).setDuration(180).start();
+        } else {
+            mBottomNav.setTranslationY(0);
+        }
     }
 
     private void setupSwipeRefresh() {
@@ -1061,6 +1140,7 @@ public class MobileBrowseActivity extends MobileActivity
         boolean subScreen = mSectionFromYou && !mYouShowing
                 && mBottomNav.getMenu().findItem(toMenuItemId(mCurrentSectionId)) == null;
         mTopBar.show(subScreen, getCurrentSectionTitle());
+        showBars(false);
     }
 
     /**
