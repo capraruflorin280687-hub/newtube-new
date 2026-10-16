@@ -114,6 +114,9 @@ public final class AppUpdates implements AppUpdateCheckerListener {
     /** That check hasn't answered yet (the shared checker takes its answer as the current one). */
     private boolean mAutoCheckInFlight;
 
+    /** This build never checks for, offers or announces updates (switched off on purpose). */
+    private static final boolean UPDATES_ENABLED = false;
+
     public static AppUpdates instance(Context context) {
         if (sInstance == null) {
             sInstance = new AppUpdates(context.getApplicationContext());
@@ -172,6 +175,9 @@ public final class AppUpdates implements AppUpdateCheckerListener {
 
     /** The launch check: quiet, and only when automatic checks are on and the last one is old. */
     public void checkOnLaunch() {
+        if (!UPDATES_ENABLED) {
+            return;
+        }
         mChecker.discardInstalledUpdate();
         checkIfDue("launch");
     }
@@ -182,6 +188,9 @@ public final class AppUpdates implements AppUpdateCheckerListener {
      * version shows up as the You tab's row and dot; nothing else is said.
      */
     public void checkIfDue(String reason) {
+        if (!UPDATES_ENABLED) {
+            return;
+        }
         if (!BuildConfig.IN_APP_UPDATES) {
             return; // store build (-Pfdroid): the store delivers updates, nothing is checked
         }
@@ -250,6 +259,9 @@ public final class AppUpdates implements AppUpdateCheckerListener {
     }
 
     public void check() {
+        if (!UPDATES_ENABLED) {
+            return;
+        }
         if (mPhase == Phase.CHECKING || mPhase == Phase.DOWNLOADING) {
             return;
         }
@@ -417,6 +429,10 @@ public final class AppUpdates implements AppUpdateCheckerListener {
 
     /** true once, on the first launch after an update this app installed. */
     public boolean takeJustUpdated() {
+        if (!UPDATES_ENABLED) {
+            mJustUpdated = false;
+            return false;
+        }
         boolean justUpdated = mJustUpdated;
         mJustUpdated = false;
         return justUpdated;
@@ -457,6 +473,9 @@ public final class AppUpdates implements AppUpdateCheckerListener {
      * automatic checks are still on (with them off, a remembered update doesn't keep nudging).
      */
     public boolean hasUpdate() {
+        if (!UPDATES_ENABLED) {
+            return false;
+        }
         if (mInfo != null) {
             return mInfo.versionCode > mInstalledCode;
         }
