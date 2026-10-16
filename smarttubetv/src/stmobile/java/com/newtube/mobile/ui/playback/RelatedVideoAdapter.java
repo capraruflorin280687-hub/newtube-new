@@ -250,24 +250,47 @@ public class RelatedVideoAdapter extends ListAdapter<Video, RelatedVideoAdapter.
             bindThumbnail(context, video);
         }
 
-        /** First letter of the channel on a round disc (card layout only). */
+        /** First letter of the channel: its name, else the first part of the meta line ("Channel • views • date"). */
+        private String channelInitial(Video video) {
+            String name = video.getAuthor();
+            if (name == null || name.trim().isEmpty()) {
+                CharSequence second = video.getSecondTitle();
+                name = null;
+                if (second != null) {
+                    String text = second.toString();
+                    int cut = text.length();
+                    for (String separator : new String[] {"\u2022", "\u00B7", "|"}) {
+                        int at = text.indexOf(separator);
+                        if (at > 0 && at < cut) {
+                            cut = at;
+                        }
+                    }
+                    name = text.substring(0, cut);
+                }
+            }
+            if (name == null) {
+                return null;
+            }
+            for (int i = 0; i < name.length(); ) {
+                int cp = name.codePointAt(i);
+                if (Character.isLetterOrDigit(cp)) {
+                    return new String(Character.toChars(cp)).toUpperCase();
+                }
+                i += Character.charCount(cp);
+            }
+            return null;
+        }
+
         private void bindAvatar(Video video) {
             if (mAvatar == null) {
                 return;
             }
-            String author = video.getAuthor();
-            if (author != null) {
-                author = author.trim();
-            }
-            if (author == null || author.isEmpty()) {
+            String initial = channelInitial(video);
+            if (initial == null) {
                 mAvatar.setVisibility(View.INVISIBLE);
                 return;
             }
-            int cp = author.codePointAt(0);
-            if (cp == '@' && author.length() > 1) {
-                cp = author.codePointAt(1);
-            }
-            mAvatar.setText(new String(Character.toChars(cp)).toUpperCase());
+            mAvatar.setText(initial);
             mAvatar.setVisibility(View.VISIBLE);
         }
 

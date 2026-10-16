@@ -1714,8 +1714,16 @@ public class MobilePlaybackActivity extends MobileActivity
                 maybeShowLoadingStill(mWatchVideo);
             }
         } else {
-            // Video is back: the still lifts at its first frame, like any new open.
+            // Video is back: give the renderer a moment to bring the first frame, then drop the
+            // thumbnail that covered the picture while only the sound played.
             armStillForReady();
+            if (mVideoStill != null) {
+                mVideoStill.postDelayed(() -> {
+                    if (!mAudioOnlyMode) {
+                        hideVideoStill();
+                    }
+                }, 600);
+            }
         }
         updateAudioOnlyUi();
     }
