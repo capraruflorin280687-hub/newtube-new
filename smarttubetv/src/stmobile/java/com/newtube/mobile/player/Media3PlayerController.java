@@ -968,6 +968,19 @@ public class Media3PlayerController implements Player.Listener {
         }
     }
 
+    /** Highest audio bitrate while "Audio only" is on: ~48-64 kbps (low-bitrate AAC / Opus). */
+    private static final int LOW_AUDIO_MAX_BITRATE = 64_000;
+
+    /**
+     * "Audio only" saver: pick the low-bitrate audio rung (less to download and decode, so less
+     * battery and data). Off restores the normal pick.
+     */
+    public void setLowAudioBitrate(boolean low) {
+        if (mTrackAdapter != null) {
+            mTrackAdapter.setMaxAudioBitrate(low ? LOW_AUDIO_MAX_BITRATE : Integer.MAX_VALUE);
+        }
+    }
+
     /**
      * NEWTUBE(viewport): the video is now drawn into a small window (system PiP, the Browse mini
      * card) of {@code widthPx x heightPx} real pixels - fetch NEW chunks at the rung that window can

@@ -79,6 +79,16 @@ class Media3TrackAdapter {
                 .setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, disabled));
     }
 
+    /**
+     * Audio-only saver: cap the audio bitrate (Integer.MAX_VALUE = no cap). Composes with the
+     * CURRENT parameters like {@link #setVideoTrackDisabled}, so it survives an autoplay-advance
+     * and the preload selector copies it. An explicit audio pick still wins over the cap.
+     */
+    void setMaxAudioBitrate(int maxBitrate) {
+        mTrackSelector.setParameters(mTrackSelector.buildUponParameters()
+                .setMaxAudioBitrate(maxBitrate));
+    }
+
     /** Fresh tracks from the player: re-resolve every explicit target against the new groups. */
     void onTracksChanged(Tracks tracks) {
         mTracks = tracks;
