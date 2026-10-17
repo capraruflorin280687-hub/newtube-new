@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Căutarea în setările aplicației pentru telefon. -->
+<resources>
+    <string name="mobile_settings_search_hint">Caută în setări</string>
+    <string name="mobile_settings_search_none">Nicio setare nu se potrivește cu „%1$s”</string>
+
+    <!-- Cuvinte pe care oamenii le caută și care nu apar în titlul setării. Separate prin spațiu; fiecare cuvânt se potrivește la început de cuvânt. -->
+    <string name="mobile_settings_search_kw_account">conectare autentificare logare deconectare delogare google profil schimbă</string>
+    <string name="mobile_settings_search_kw_theme">mod întunecat mod luminos noapte aspect culori dark</string>
+    <string name="mobile_settings_search_kw_country">țară regiune</string>
+    <string name="mobile_settings_search_kw_start_screen">lansare pornire se deschide implicit filă pagina principală acasă</string>
+    <string name="mobile_settings_search_kw_interface_size">scală zoom font dimensiune text densitate mai mare mai mic</string>
+    <string name="mobile_settings_search_kw_tabs">bara de jos secțiuni navigare explorează file</string>
+    <string name="mobile_settings_search_kw_hidden">ascunde vizionate filtru viitoare premiere live</string>
+    <string name="mobile_settings_search_kw_video_menu">meniu contextual trei puncte apăsare lungă opțiuni</string>
+    <string name="mobile_settings_search_kw_channels_order">abonamente sortare sortează canale</string>
+    <string name="mobile_settings_search_kw_watch_history">pauză istoric incognito</string>
+    <string name="mobile_settings_search_kw_video_ends">redare automată repetă buclă amestecă următorul videoclip</string>
+    <string name="mobile_settings_search_kw_background">fundal imagine în imagine pip doar audio minimizează</string>
+    <string name="mobile_settings_search_kw_natural_voice">ton înălțime întindere timp veveriță</string>
+    <string name="mobile_settings_search_kw_audio_focus">apeluri notificări alte aplicații întreruperi</string>
+    <string name="mobile_settings_search_kw_hide_related">sugestii similare recomandări</string>
+    <string name="mobile_settings_search_kw_dislikes">return youtube dislike ryd nu-mi place</string>
+    <string name="mobile_settings_search_kw_quality">rezoluție 4k 1080p 720p hd economizor de date date mobile</string>
+    <string name="mobile_settings_search_kw_loudness">volum normalizare volum automat încet tare</string>
+    <string name="mobile_settings_search_kw_player_volume">încet tare sunet</string>
+    <string name="mobile_settings_search_kw_captions">subtitrări subtitrare cc</string>
+    <string name="mobile_settings_search_kw_sponsorblock">omite sponsori reclame segmente introduceri</string>
+    <string name="mobile_settings_search_kw_dearrow">clickbait titluri miniaturi</string>
+    <string name="mobile_settings_search_kw_backup">export import salvează setări copie rezervă backup</string>
+    <string name="mobile_settings_search_kw_video_format">codec vp9 av1 h264 avc hdr 60fps</string>
+    <string name="mobile_settings_search_kw_buffer">încărcare buffering cache memorie</string>
+    <string name="mobile_settings_search_kw_dns">dns ipv4 ipv6 servere</string>
+    <string name="mobile_settings_search_kw_conscrypt">ssl tls certificate securitate cenzură blocat byebyedpi</string>
+    <string name="mobile_settings_search_kw_multi_profiles">profiluri fiecare cont propriu diferit</string>
+    <string name="mobile_settings_search_kw_updates">actualizare versiune nouă</string>
+    <string name="mobile_settings_search_kw_diagnostic_log">raport eroare erori jurnal depanare log</string>
+    <string name="mobile_settings_search_kw_gesture_levels">gesturi luminozitate volum</string>
+    <string name="mobile_settings_search_kw_gesture_seek">gesturi derulare sari înainte înapoi</string>
+</resources>
