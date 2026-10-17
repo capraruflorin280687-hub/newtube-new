@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_close">Închide</string>
+    <string name="empty_directory_hint">Dosar gol</string>
+    <string name="type_archive">Arhivă</string>
+    <string name="type_certificate">Certificat</string>
+    <string name="type_directory">Dosar</string>
+    <string name="type_document">Fișier</string>
+    <string name="type_drawing">Imagine</string>
+    <string name="type_excel">Foaie de calcul</string>
+    <string name="type_image">Imagine</string>
+    <string name="type_music">Muzică</string>
+    <string name="type_video">Video</string>
+    <string name="type_pdf">Document PDF</string>
+    <string name="type_power_point">Prezentare</string>
+    <string name="type_word">Document</string>
+</resources>
