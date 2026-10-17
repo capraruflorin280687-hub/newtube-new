@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="mobile_download_choice_audio">Audio (M4A)</string>
-    <string name="mobile_download_choice_video">Video %1$s</string>
+    <string name="mobile_watch_audio_only">Doar audio</string>
+    <string name="mobile_watch_audio_only_on">Doar audio activat</string>
 </resources>
