@@ -153,6 +153,26 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
     /** Marker payload for in-place item mutations (watch progress, DeArrow overrides). */
     private static final Object PAYLOAD_SYNC = new Object();
 
+    /** NEWTUBE(channel-avatars): the subscription avatars arrived after the cards were bound. */
+    private final ChannelAvatarCache.Listener mAvatarListener = () -> {
+        if (getItemCount() > 0) {
+            notifyItemRangeChanged(0, getItemCount(), PAYLOAD_SYNC);
+        }
+    };
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        ChannelAvatarCache.addListener(mAvatarListener);
+        ChannelAvatarCache.ensureLoaded();
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        ChannelAvatarCache.removeListener(mAvatarListener);
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
             @NonNull java.util.List<Object> payloads) {
@@ -177,6 +197,9 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
         private final View mOverflow;
         @androidx.annotation.Nullable
         private final TextView mAvatar;
+        @androidx.annotation.Nullable
+        private final ImageView mAvatarImage;
+        private String mBoundAvatarUrl;
         private Video mVideo;
         private String mBoundThumbUrl;
 
@@ -191,6 +214,7 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             mMeta = itemView.findViewById(R.id.video_meta);
             mOverflow = itemView.findViewById(R.id.video_overflow);
             mAvatar = itemView.findViewById(R.id.video_avatar);
+            mAvatarImage = itemView.findViewById(R.id.video_avatar_image);
 
             itemView.setOnClickListener(v -> {
                 if (mVideo != null && clickListener != null) {
@@ -276,6 +300,9 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             }
             if (author == null || author.isEmpty()) {
                 mAvatar.setVisibility(View.INVISIBLE);
+                if (mAvatarImage != null) {
+                    mAvatarImage.setVisibility(View.GONE);
+                }
                 return;
             }
             int cp = author.codePointAt(0);
@@ -284,6 +311,32 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             }
             mAvatar.setText(new String(Character.toChars(cp)).toUpperCase());
             mAvatar.setVisibility(View.VISIBLE);
+            bindAvatarImage(video);
+        }
+
+        /** NEWTUBE(channel-avatars): the channel's real picture over the letter, when it is known. */
+        private void bindAvatarImage(Video video) {
+            if (mAvatarImage == null) {
+                return;
+            }
+            String url = ChannelAvatarCache.get(video.channelId);
+            if (url == null) {
+                if (mBoundAvatarUrl != null) {
+                    Glide.with(itemView.getContext().getApplicationContext()).clear(mAvatarImage);
+                    mBoundAvatarUrl = null;
+                }
+                mAvatarImage.setVisibility(View.GONE);
+                return;
+            }
+            mAvatarImage.setVisibility(View.VISIBLE);
+            if (url.equals(mBoundAvatarUrl)) {
+                return; // same picture already on the view: no reload, no blink
+            }
+            mBoundAvatarUrl = url;
+            Glide.with(itemView.getContext())
+                    .load(url)
+                    .circleCrop()
+                    .into(mAvatarImage);
         }
 
         private void bindBadge(Context context, Video video) {
@@ -427,6 +480,11 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             mVideo = null;
             mBoundThumbUrl = null;
             Glide.with(itemView.getContext().getApplicationContext()).clear(mThumbnail);
+            if (mAvatarImage != null) {
+                mBoundAvatarUrl = null;
+                Glide.with(itemView.getContext().getApplicationContext()).clear(mAvatarImage);
+                mAvatarImage.setVisibility(View.GONE);
+            }
         }
     }
 
