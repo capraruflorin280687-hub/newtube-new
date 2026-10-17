@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  NewTube adaptive-icon foreground (stmobile flavor).
-
-  The NewTube "arch" mark: a lowercase-n arch (which also reads as a
-  tunnel/tube), white, optically centred inside the 66x66 adaptive safe zone (nudged 2 units up: the arch is bottom-heavy, so geometric centring reads low)
-  (viewport 108, safe area ~21..87) so no launcher mask clips it.
-  The stroke matches the fill and only softens the corners.
-  Deliberately NOT a play triangle — see docs/gtm + legal notes.
--->
+<!-- App icon foreground: the red play badge, traced from the supplied launcher PNG (58 of the
+     66 safe-zone units wide). The triangle is a hole (evenOdd) so the white background shows. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
     <path
-        android:fillColor="#FFFFFF"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="5"
-        android:strokeLineJoin="round"
-        android:strokeLineCap="round"
-        android:pathData="M32,76 L32,53 A22,22 0 0 1 76,53 L76,76 L63,76 L63,53 A9,9 0 0 0 45,53 L45,76 Z" />
+        android:fillColor="#FF0033"
+        android:fillType="evenOdd"
+        android:pathData="M65.93,73.88 L59.85,74.09 L51.43,74.13 L44.41,74.00 L36.93,73.63 L32.72,73.15 L30.85,72.72 L30.38,72.56 L29.44,72.08 L28.18,71.07 L27.35,70.14 L26.49,68.73 L25.96,66.86 L25.52,64.06 L25.10,59.38 L24.94,54.23 L25.09,48.62 L25.52,43.94 L25.96,41.14 L26.49,39.27 L27.01,38.33 L28.04,37.05 L28.98,36.23 L30.38,35.45 L32.72,34.86 L36.46,34.42 L38.33,34.28 L44.41,34.01 L51.43,33.87 L61.72,33.95 L69.67,34.28 L71.54,34.43 L75.28,34.86 L77.15,35.29 L78.56,35.91 L79.02,36.22 L79.84,36.93 L80.65,37.86 L81.24,38.80 L81.48,39.27 L81.90,40.67 L82.46,43.94 L82.96,49.56 L83.06,54.23 L82.90,59.38 L82.46,64.06 L82.01,66.86 L81.48,68.73 L80.65,70.14 L79.84,71.07 L78.56,72.10 L77.15,72.72 L75.28,73.15 L71.54,73.59 Z M49.60,62.19 L57.98,57.08 L58.91,56.44 L60.78,55.36 L62.42,54.23 L62.42,53.77 L60.78,52.64 L58.91,51.56 L57.98,50.92 L52.83,47.82 L51.90,47.18 L49.09,45.47 L48.62,45.47 L48.42,45.81 L48.41,46.28 L48.42,62.19 L48.62,62.53 L49.09,62.53 Z" />
 </vector>
