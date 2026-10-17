@@ -774,7 +774,7 @@ public class PlayerTweaksData implements ProfileChangeListener {
         mIsQuickSkipVideosAltEnabled = Helpers.parseBoolean(split, 58, false);
         mIsAudioTimeStretchingEnabled = Helpers.parseBoolean(split, 59, true);
         mIsQueueRespectsPlaybackMode = Helpers.parseBoolean(split, 60, false);
-        mIsReturnYouTubeDislikeEnabled = Helpers.parseBoolean(split, 61, false);
+        mIsReturnYouTubeDislikeEnabled = Helpers.parseBoolean(split, 61, true);
 
         updateDefaultValues();
     }
