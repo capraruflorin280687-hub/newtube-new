@@ -807,8 +807,9 @@
 
                     </LinearLayout>
 
+                    <!-- Audio only: video track off, sound keeps playing and carries on to the next video. -->
                     <LinearLayout
-                        android:id="@+id/mobile_watch_share"
+                        android:id="@+id/mobile_watch_audio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -821,16 +822,19 @@
                         android:paddingVertical="14dp">
 
                         <ImageView
+                            android:id="@+id/mobile_watch_audio_icon"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:contentDescription="@string/mobile_watch_share"
-                            android:src="@drawable/ic_watch_share" />
+                            android:contentDescription="@string/mobile_watch_audio_only"
+                            android:src="@drawable/ic_watch_audio_only"
+                            android:tint="@color/mobile_color_on_surface" />
 
                         <TextView
+                            android:id="@+id/mobile_watch_audio_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="@string/mobile_watch_share"
+                            android:text="@string/mobile_watch_audio_only"
                             android:textColor="@color/mobile_color_on_surface"
                             android:textSize="14sp" />
 
@@ -871,9 +875,8 @@
 
                     <!-- Save to playlist. Same action as gear -> More -> Save to playlist; it lives
                          here too because that is where YouTube puts it and where people look. -->
-                    <!-- Audio only: video track off, sound keeps playing and carries on to the next video. -->
                     <LinearLayout
-                        android:id="@+id/mobile_watch_audio"
+                        android:id="@+id/mobile_watch_share"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -886,19 +889,16 @@
                         android:paddingVertical="14dp">
 
                         <ImageView
-                            android:id="@+id/mobile_watch_audio_icon"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:contentDescription="@string/mobile_watch_audio_only"
-                            android:src="@drawable/ic_watch_audio_only"
-                            android:tint="@color/mobile_color_on_surface" />
+                            android:contentDescription="@string/mobile_watch_share"
+                            android:src="@drawable/ic_watch_share" />
 
                         <TextView
-                            android:id="@+id/mobile_watch_audio_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text="@string/mobile_watch_audio_only"
+                            android:text="@string/mobile_watch_share"
                             android:textColor="@color/mobile_color_on_surface"
                             android:textSize="14sp" />
 
