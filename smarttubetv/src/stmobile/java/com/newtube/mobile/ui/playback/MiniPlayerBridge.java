@@ -325,6 +325,35 @@ public final class MiniPlayerBridge {
         ViewManager.instance(context).startView(PlaybackView.class);
     }
 
+    /** NEWTUBE(mini-pip): the next expand is only a way into system PiP (see enterSystemPipOnLeave). */
+    private static boolean sPipOnExpand;
+
+    /**
+     * NEWTUBE(mini-pip): the user left the app (Home) with a mini session docked. Bring the live
+     * player back without the expand morph and let it enter system PiP, so the video floats over
+     * the launcher. Returns false (nothing done) when there is no playing mini session or the
+     * user's "Play in background" choice is "Only audio".
+     */
+    public static boolean enterSystemPipOnLeave(Context context) {
+        if (!isActive()) {
+            return false;
+        }
+        MobilePlaybackActivity activity = sActivity.get();
+        if (activity == null || !activity.wantsPipOnLeaveFromMini()) {
+            return false;
+        }
+        sPipOnExpand = true;
+        expand(context);
+        return true;
+    }
+
+    /** Single use: read by the player's onResume right after the expand. */
+    static boolean takePipOnExpand() {
+        boolean pip = sPipOnExpand;
+        sPipOnExpand = false;
+        return pip;
+    }
+
     /** Close from the bar's X: stop playback and finish the hidden playback activity. */
     public static void close() {
         MobilePlaybackActivity activity = sActivity.get();
