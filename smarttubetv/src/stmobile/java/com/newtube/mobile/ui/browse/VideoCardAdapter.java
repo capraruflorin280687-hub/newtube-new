@@ -319,8 +319,9 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             if (mAvatarImage == null) {
                 return;
             }
-            String url = ChannelAvatarCache.get(video.channelId);
+            String url = ChannelAvatarCache.get(video.channelId, video.getAuthor());
             if (url == null) {
+                ChannelAvatarCache.request(video); // lazy, once per channel; arrives via the listener
                 if (mBoundAvatarUrl != null) {
                     Glide.with(itemView.getContext().getApplicationContext()).clear(mAvatarImage);
                     mBoundAvatarUrl = null;
