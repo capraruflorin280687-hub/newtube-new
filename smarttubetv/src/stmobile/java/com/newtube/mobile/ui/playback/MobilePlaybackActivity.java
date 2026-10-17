@@ -1507,6 +1507,9 @@ public class MobilePlaybackActivity extends MobileActivity
         // it the whole time, so no surface change, no codec re-init, no frozen frames. The card
         // captured its last frame for us; it covers the 1-2 frames until the texture paints.
         boolean fromMini = MiniPlayerBridge.isActive();
+        // NEWTUBE(mini-pip): this expand is the Home press with a mini session docked: no morph,
+        // straight into system PiP (enterPipFromMiniLeave below).
+        boolean pipFromMini = MiniPlayerBridge.takePipOnExpand() && fromMini && launch == null;
         Rect miniBounds = fromMini ? MiniPlayerBridge.takeMiniBounds() : null;
         if (fromMini) {
             Bitmap handoff = MiniPlayerBridge.takeHandoffStill();
@@ -1535,6 +1538,9 @@ public class MobilePlaybackActivity extends MobileActivity
             // player's first frame is up.
             FrameGate.afterNextFrame(mContainer, HOST_CARD_FOLD_WAIT_MS,
                     () -> MiniPlayerBridge.foldHostCard(null));
+        } else if (pipFromMini) {
+            overridePendingTransition(0, 0);
+            MiniPlayerBridge.foldHostCard(null);
         } else if (fromMini && mContainer != null) {
             // Plain mini-card expansion: exact reverse of minimize, from the card rectangle.
             overridePendingTransition(0, 0);
@@ -1581,6 +1587,38 @@ public class MobilePlaybackActivity extends MobileActivity
             clearBackdropForMorphStart();
         }
         updateOrientationHandBackListener();
+
+        if (pipFromMini) {
+            Utils.removeCallbacks(mEnterPipFromMiniLeave);
+            Utils.postDelayed(mEnterPipFromMiniLeave, 60);
+        }
+    }
+
+    /**
+     * NEWTUBE(mini-pip): the user pressed Home while the in-app mini-player played. Whether the
+     * player may go to system PiP for it: playing, PiP available, and the background choice is
+     * picture-in-picture (not "Only audio"), the same rule as leaving the full player.
+     */
+    boolean wantsPipOnLeaveFromMini() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && !mIsInPip && !isFinishing() && !isDestroyed()
+                && mPlayer != null && mExoPlayerController != null && isPlaying()
+                && Helpers.isPictureInPictureSupported(this)
+                && BackgroundModePolicy.onLeave(getBackgroundMode()) == BackgroundModePolicy.Action.PIP;
+    }
+
+    private final Runnable mEnterPipFromMiniLeave = this::enterPipFromMiniLeave;
+
+    private void enterPipFromMiniLeave() {
+        if (!mIsResumed || mIsInPip || mPipEnterPending || isFinishing() || isDestroyed()
+                || mPlayer == null || !isPlaying()) {
+            logPip("mini-leave-skip");
+            return;
+        }
+        logPip("mini-leave-enter");
+        // Not enterPipFromMenu(): the user is leaving the app, so a later launcher tap must
+        // restore the player (SystemPipBridge.sInAppPip stays false).
+        enterPipMode();
     }
 
     private void clearBackdropForMorphStart() {
