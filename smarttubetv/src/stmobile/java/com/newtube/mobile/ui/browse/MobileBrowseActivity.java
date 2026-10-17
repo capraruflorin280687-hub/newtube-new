@@ -132,13 +132,11 @@ public class MobileBrowseActivity extends MobileActivity
     private static final int[] PREFERRED_SECTION_IDS = {
             MediaGroup.TYPE_HOME,
             MediaGroup.TYPE_SUBSCRIPTIONS,
-            MediaGroup.TYPE_HISTORY,
             VideoDownloads.SECTION_ID,
     };
     private static final int[] PREFERRED_SECTION_TITLE_RES = {
             R.string.header_home,
             R.string.header_subscriptions,
-            R.string.header_history,
             R.string.header_downloads,
     };
 
