@@ -283,6 +283,27 @@ public abstract class MobileActivity extends MotherActivity {
         checkTheme();
     }
 
+    /**
+     * NEWTUBE(mini-pip): Home (or the home gesture) with the in-app mini-player docked and playing
+     * turns it into a system picture-in-picture window, so the video keeps floating over the
+     * launcher instead of staying inside the app. Not for our own navigation (a card tap, a
+     * channel, a sheet) - those start a view first, see ViewManager.isNewViewPending.
+     */
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        // Only the screens that dock the mini card (Home, Search, Channel). The player itself
+        // gets this too when it minimizes into the card - that must never expand it again.
+        if (!(this instanceof MiniPlayerBridge.MiniHost)
+                || !mResumed || isFinishing() || isChangingConfigurations()) {
+            return;
+        }
+        if (getViewManager() != null && getViewManager().isNewViewPending()) {
+            return;
+        }
+        MiniPlayerBridge.enterSystemPipOnLeave(this);
+    }
+
     @Override
     protected void onPause() {
         mResumed = false;
