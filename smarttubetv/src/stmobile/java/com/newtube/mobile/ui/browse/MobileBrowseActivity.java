@@ -376,7 +376,7 @@ public class MobileBrowseActivity extends MobileActivity
         final int hideAfter = Math.round(24 * density);
         final int showAfter = Math.round(12 * density);
         // The list now starts under the top bar: the refresh spinner must appear below it.
-        int bar = getResources().getDimensionPixelSize(R.dimen.mobile_title_bar_height);
+        int bar = getResources().getDimensionPixelSize(R.dimen.mobile_browse_title_bar_height);
         mContentSwipe.setProgressViewOffset(false, bar, bar + Math.round(64 * density));
         mContentGrid.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
