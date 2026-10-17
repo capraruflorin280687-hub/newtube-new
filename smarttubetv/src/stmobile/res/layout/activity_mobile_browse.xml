@@ -373,6 +373,8 @@
         app:elevation="0dp"
         app:itemIconSize="24dp"
         app:itemIconTint="@color/mobile_bottom_nav_item"
+        app:itemPaddingBottom="0dp"
+        app:itemPaddingTop="4dp"
         app:itemTextAppearanceActive="@style/MobileBottomNavText"
         app:itemTextAppearanceActiveBoldEnabled="false"
         app:itemTextAppearanceInactive="@style/MobileBottomNavText"
