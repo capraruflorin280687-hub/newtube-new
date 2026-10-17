@@ -194,7 +194,6 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
         private final ProgressBar mWatchProgress;
         private final TextView mTitle;
         private final TextView mMeta;
-        private final View mOverflow;
         @androidx.annotation.Nullable
         private final TextView mAvatar;
         @androidx.annotation.Nullable
@@ -212,7 +211,6 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             mWatchProgress = itemView.findViewById(R.id.video_watch_progress);
             mTitle = itemView.findViewById(R.id.video_title);
             mMeta = itemView.findViewById(R.id.video_meta);
-            mOverflow = itemView.findViewById(R.id.video_overflow);
             mAvatar = itemView.findViewById(R.id.video_avatar);
             mAvatarImage = itemView.findViewById(R.id.video_avatar_image);
 
@@ -235,20 +233,8 @@ public class VideoCardAdapter extends ListAdapter<Video, RecyclerView.ViewHolder
             itemView.setOnLongClickListener(v ->
                     mVideo != null && longClickListener != null && longClickListener.onVideoLongClick(mVideo));
 
-            // ⋮ = the exact long-press context menu, just discoverable (Not interested, Open
-            // channel, playlists...). Hidden when the host screen has no menu wired.
-            if (mOverflow != null) {
-                mOverflow.setVisibility(longClickListener == null ? View.GONE : View.VISIBLE);
-                mOverflow.setOnClickListener(v -> {
-                    if (mVideo != null && longClickListener != null) {
-                        longClickListener.onVideoLongClick(mVideo);
-                    }
-                });
-                // NEWTUBE(a11y): one of 40 identical "More options" otherwise.
-                mOverflow.setContentDescription(video.getTitle() != null
-                        ? context.getString(R.string.mobile_more_options_for, video.getTitle())
-                        : context.getString(R.string.mobile_player_more));
-            }
+            // NEWTUBE: no on-card ⋮ button any more (it opened the menu on accidental taps while
+            // scrolling); the same menu stays on long press, wired just above.
 
             mTitle.setText(video.getTitle());
 
